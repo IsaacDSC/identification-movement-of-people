@@ -1,7 +1,7 @@
 import cv2
 import os
 
-video_path = 'src/persons.mp4'
+video_path = 'src/videoplayback.mp4'
 
 # Verifica se o arquivo de vídeo existe
 if not os.path.exists(video_path):
