@@ -16,38 +16,24 @@ if not cap.isOpened():
     print("Erro ao abrir o vídeo")
     exit()
 
-# Lê o primeiro frame do vídeo
-ret, frame = cap.read()
-if not ret:
-    print("Não foi possível ler o primeiro frame")
-    exit()
-
-# Seleciona a região de interesse (ROI) para o tracking
-bbox = cv2.selectROI(frame, False)
-
-# Inicializa o tracker
-tracker = cv2.TrackerKCF_create()
-tracker.init(frame, bbox)
+# Inicializa o detector de pessoas
+hog = cv2.HOGDescriptor()
+hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 
 while True:
     ret, frame = cap.read()
     if not ret:
         break
 
-    # Atualiza o tracker
-    ret, bbox = tracker.update(frame)
+    # Detecta pessoas no frame
+    boxes, weights = hog.detectMultiScale(frame, winStride=(8, 8))
 
-    if ret:
-        # Desenha o bounding box
-        p1 = (int(bbox[0]), int(bbox[1]))
-        p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
-        cv2.rectangle(frame, p1, p2, (255, 0, 0), 2, 1)
-    else:
-        # Tracking falhou
-        cv2.putText(frame, "Tracking falhou", (100, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 2)
+    # Desenha os bounding boxes ao redor das pessoas detectadas
+    for (x, y, w, h) in boxes:
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
     # Mostra o frame
-    cv2.imshow('Tracking', frame)
+    cv2.imshow('Detecção de Pessoas', frame)
 
     # Pressione 'q' para sair
     if cv2.waitKey(1) & 0xFF == ord('q'):
