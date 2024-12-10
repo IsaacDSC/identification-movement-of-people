@@ -85,8 +85,8 @@ cam_list=[
 threads = []
 
 
-for i, cam in enumerate(cam_list):
-    thread1 = Thread(i, cam)
+for i, ip in enumerate(cam_list):
+    thread1 = Thread(i, ip)
     thread1.start()
     threads.append(thread1)
 
